@@ -1,5 +1,7 @@
 LOG_LOGLEVEL="TRACE"
 
+LOG_CONFIG_SHOW_TRACE=false
+
 LOG_ERROR_LOGLEVEL="ERROR"
 LOG_INFO_LOGLEVEL="INFO"
 LOG_DEBUG_LOGLEVEL="DEBUG"
@@ -33,7 +35,11 @@ function log.trace() {
 
 function _log.print_log() {
     local funcPath="${FUNCNAME[@]:1}"
-    echo -n $LOG_ORANGE
-    echo "$1" ": [" "$funcPath" "] \"${*:2}\"" $LOG_RESET
+    echo -n $LOG_GREEN
+    if [ $LOG_CONFIG_SHOW_TRACE = true ]; then
+        echo "$1" ": [" "$funcPath" "] \"${*:2}\"" $LOG_RESET
+    else
+        echo "$1" ": \"${*:2}\"" $LOG_RESET
+    fi
 }
 

@@ -4,10 +4,6 @@ function hg.get_revision_from_project() {
     local project=$2
     local branch=$3
 
-    log.info "----------------------------"
-    log.info "$project"
-    log.info "----------------------------"
-
     hg.clone_in_folder $projectUrl $project
 
     hg.update_project $project
@@ -61,8 +57,10 @@ function hg.clone_in_folder() {
         fi
 
     else
-        log.error "Folder provided is a folder already exists: $folder"
-        return 1
+        if [ ! -d "$folder/.hg" ]; then
+            log.error "Folder provided is a folder already exists: $folder"
+            return 1
+        fi
     fi
 }
 

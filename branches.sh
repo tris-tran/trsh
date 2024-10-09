@@ -2,8 +2,8 @@
 #
 #Script para detectar ramas abiertas en los distintos proyectos
 . ./log.sh
+. ./utils.sh
 . ./hg.sh
-
 
 function test() {
 
@@ -13,13 +13,6 @@ function test() {
 }
 
 test
-
-function utils.error_and_exit() {
-    if [ $? -ne 0 ]; then
-        log.error $@
-        exit 1
-    fi
-}
 
 LOG_LOGLEVEL="ERROR"
 
@@ -32,4 +25,6 @@ LOG_LOGLEVEL="ERROR"
 #hg.get_all_active_branches /home/eochoa/Projects/espublico-expedientes eochoa
 
 hg.get_revision_from_project ssh://hg@hg-central.g3stiona.com/boe boe default
+hg.get_revision_from_project ssh://hg@hg-central.g3stiona.com/boe boe default
+
 
