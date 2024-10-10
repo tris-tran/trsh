@@ -39,6 +39,7 @@ function hg.update_project() {
     hg pull
     if [ $? -ne 0 ]; then
         log.error "Error pulling project $project"
+        popd > /dev/null
         return 1
     fi
 

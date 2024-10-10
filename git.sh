@@ -28,6 +28,7 @@ function git.get_last_revision() {
     _r=$revision
     if [ $? -ne 0 ]; then
         log.error "Error actualizando la rama $branch. Proceso detenido"
+        popd > /dev/null
         return 1
     fi
 
@@ -46,6 +47,7 @@ function git.update_project() {
     git fetch $origin $branch
     if [ $? -ne 0 ]; then
         log.error "Error fetching project $project"
+        popd > /dev/null
         return 1
     fi
 
