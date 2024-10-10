@@ -10,7 +10,28 @@ LOG_TRACE_LOGLEVEL="TRACE"
 LOG_RED=$(tput setaf 1)
 LOG_GREEN=$(tput setaf 2)
 LOG_ORANGE=$(tput setaf 3)
-LOG_RESET=$(tput sgr0)
+LOG_COLOR_RESET=$(tput sgr0)
+
+function log.red() {
+    echo $LOG_RED $@
+}
+
+function log.orange() {
+    _log.color $LOG_ORANGE $@
+}
+
+function log.green() {
+    _log.color $LOG_GREEN $@
+}
+
+function _log.color() {
+    local color=$1
+    shift
+
+    echo -n $color
+    echo $@
+    echo -n $LOG_COLOR_RESET
+}
 
 
 function log.error() {
@@ -35,11 +56,12 @@ function log.trace() {
 
 function _log.print_log() {
     local funcPath="${FUNCNAME[@]:1}"
+    local level=$1
     echo -n $LOG_GREEN
     if [ $LOG_CONFIG_SHOW_TRACE = true ]; then
-        echo "$1" ": [" "$funcPath" "] \"${*:2}\"" $LOG_RESET
+        echo "$level" ": [" "$funcPath" "] \"${*:2}\"" $LOG_COLOR_RESET
     else
-        echo "$1" ": \"${*:2}\"" $LOG_RESET
+        echo "$level" ": \"${*:2}\"" $LOG_COLOR_RESET
     fi
 }
 
