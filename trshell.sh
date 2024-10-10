@@ -7,8 +7,8 @@
 TRSHELL_DIST="/home/tristanstille/Borrar/tristan-scripts"
 TRSHELL_LIBS="/home/tristanstille/Projects/tristan-scripts"
 
-TRSHELL_REMOTE=""
-TRSHELL_BRANCH=""
+TRSHELL_REMOTE="origin"
+TRSHELL_BRANCH="master"
 
 source $TRSHELL_LIBS/load.sh
 load.full_init $TRSHELL_LIBS

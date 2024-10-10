@@ -31,7 +31,11 @@ function update-trshell.show_info() {
     pushd $dist > /dev/null
     git reset > /dev/null
     git clean -f > /dev/null
+    log.line
+    log.green "Changes in the last update"
     git --no-pager log ..origin/master --oneline 
+    log.line
+    log.green "File changes in the update"
     git --no-pager diff origin/master --stat
     git merge > /dev/null
     popd > /dev/null
