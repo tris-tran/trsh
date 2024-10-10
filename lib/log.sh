@@ -12,6 +12,10 @@ LOG_GREEN=$(tput setaf 2)
 LOG_ORANGE=$(tput setaf 3)
 LOG_COLOR_RESET=$(tput sgr0)
 
+function log.line() {
+    echo ""
+}
+
 function log.red() {
     echo $LOG_RED $@
 }
