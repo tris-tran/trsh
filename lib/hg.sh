@@ -1,3 +1,4 @@
+_load.load_once hg && return 0
 
 function hg.get_revision_from_project() {
     local projectUrl=$1

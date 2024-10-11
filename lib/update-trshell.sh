@@ -1,3 +1,4 @@
+_load.load_once update-trshell && return 0
 
 function update-trshell.needs_update() {
     local dist=$1

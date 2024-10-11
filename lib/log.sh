@@ -1,3 +1,6 @@
+
+_load.load_once log && return 0
+
 LOG_LOGLEVEL="TRACE"
 
 LOG_CONFIG_SHOW_TRACE=false

@@ -2,8 +2,12 @@
 
 #TRSHELL_LIBS exists at this point
 
+# Array with loaded libs to prevent multiple loads of one library
+# in the same script
+declare -A _LIB_LOADED
+
 #List of possible libraries
-_LOAD_LIBS=(
+declare -r _LOAD_LIBS=(
     log
     utils
     hg
@@ -34,6 +38,8 @@ function _load.source_lib() {
     #source
     . $libPath/lib/$lib".sh"
     _load.import_error $libPath $lib
+
+    _load.load_once $lib
 }
 
 function _load.import_error() {
@@ -41,4 +47,14 @@ function _load.import_error() {
         echo "Error loading library $2 from $1"
         exit 1
     fi
+}
+
+
+function _load.load_once() {
+    local lib=$1
+
+    [[ "${_LIB_LOADED[$lib]}" = "true" ]] && return 0
+    _LIB_LOADED[$lib]=true
+    
+    return 1
 }

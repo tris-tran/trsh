@@ -1,4 +1,5 @@
 
+_load.load_once utils && return 0
 
 function utils.split_by() {
     local separator=$1

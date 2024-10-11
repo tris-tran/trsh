@@ -1,4 +1,6 @@
 
+_load.load_once git && return 0
+
 function git.get_revision_from_project() {
     local projectUrl=$1
     local project=$2
