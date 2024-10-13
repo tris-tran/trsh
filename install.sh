@@ -1,7 +1,6 @@
 #!/bin/bash
 
-DIR="$HOME/.trshell"
-
+TRSH="$HOME/.trshell"
 REPO="tristan-scripts"
 REMOTE="git@github.com:tris-tran/${REPO}.git"
 BRANCH="master"
@@ -14,9 +13,9 @@ command_exists() {
 
 command_exists git || return 1
 
-rm -rf $DIR #DELETE!!!
-if [ -d "$DIR" ]; then
-    echo "Folder $DIR alredy exits"
+rm -rf $TRSH #DELETE!!!
+if [ -d "$TRSH" ]; then
+    echo "Folder $TRSH alredy exits"
     exit 1
 fi
 
@@ -28,7 +27,7 @@ fi
 umask g-w,o-w
 
 
-git init --quiet "$DIR" && pushd "$DIR" > /dev/null \
+git init --quiet "$TRSH" && pushd "$TRSH" > /dev/null \
     && git config core.eol lf \
     && git config core.autocrlf false \
     && git config fsck.zeroPaddedFilemode ignore \
@@ -38,11 +37,14 @@ git init --quiet "$DIR" && pushd "$DIR" > /dev/null \
     && git fetch --depth=1 origin \
     && git checkout -b "$BRANCH" "origin/$BRANCH" 
     || {
-        [ ! -d "$DIR" ] || {
+        [ ! -d "$TRSH" ] || {
         popd > /dev/null
-            rm -rf "$DIR" 2>/dev/null
+            rm -rf "$TRSH" 2>/dev/null
         }
         echo "git clone of trshell repo failed"
         exit 1
     }
+
+cp $TRSH/templates/trshrc.trsh-templates $HOME/.trshrc
+
 

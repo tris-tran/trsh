@@ -1,6 +1,34 @@
 
 _load.load_once git && return 0
 
+function git.push() {
+    local project=$1
+    local origin=$2
+    local branch=$3
+
+    pushd $project > /dev/null
+    git push $origin $branch
+    popd > /dev/null
+}
+
+function git.commit() {
+    local project=$1
+    local message=$2
+
+    pushd $project > /dev/null
+    git commit -m "$message"
+    popd > /dev/null
+}
+
+function git.add_file() {
+    local project=$1
+    local file=$2
+
+    pushd $project > /dev/null
+    git add $file
+    popd > /dev/null
+}
+
 function git.get_revision_from_project() {
     local projectUrl=$1
     local project=$2

@@ -1,0 +1,13 @@
+
+
+TRSH_USER={{HOME}}/{{USER}}
+TRSH_USER_EMAIL={{! Aradir email del usuario}}{{USER}}
+TRSH_TMP=
+
+TRSH_LOGLEVEL="TRACE"
+
+{{# TRSH_LIST}}
+    {{NAME}}
+{{\ TRSH_LIST}}
+
+TRSH_ASD
