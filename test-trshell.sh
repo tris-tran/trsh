@@ -1,6 +1,0 @@
-#!./trshell
-#
-#
-
-
-echo "ASDASDASDASDASDASD"

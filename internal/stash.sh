@@ -1,22 +1,10 @@
-#!/bin/bash
-#
-
-source ./trshell.sh
-
-log.green "Inside functionality"
-
-STASH_OPTIONS=(
-    help
-    upload-script
-    upload-function
-    upload-oneliner
-    )
+_load.load_once stash && return 0
 
 _STASH_upload_script_DOC=$(cat <<-END
     Hace el upload de un script
 END
 )
-function stash.upload_script() {
+function stash.script() {
     local scriptFile=$1
     local scriptFileName=$(basename "$scriptFile")
 
@@ -33,7 +21,7 @@ _STASH_upload_function_DOC=$(cat <<-END
     Hace el upload de una funcion
 END
 )
-function stash.upload_function() {
+function stash.function() {
     log.error "Upload function"
     local function=$1
     local fileInProject="$TRSH_USER/functions/$function"
@@ -60,7 +48,7 @@ _STASH_upload_oneliner_DOC=$(cat <<-END
     Hace el upload de un oneliner de shell
 END
 )
-function stash.upload_oneliner() {
+function stash.oneliner() {
     log.error "Uload oneliner"
     local name=$1
     local fileInProject="$TRSH_USER/oneliners/$name"
@@ -89,6 +77,7 @@ function stash.upload_oneliner() {
 }
 
 function _stash.init_user() {
+    log.red "Stash dir: $TRSH_STASH"
     pushd $TRSH_STASH >> /dev/null
 
     git merge --no-commit --no-ff "master" > /dev/null
@@ -99,12 +88,3 @@ function _stash.init_user() {
 
     popd > /dev/null
 }
-
-cli.define_options "${STASH_OPTIONS[*]}"
-cli.define_name "STASH"
-cli.help
-#cli.run "upload-script" /home/tristanstille/Projects/tristan-scripts/trshell.sh
-#cli.run "upload-function" "git.push"
-cli.run $@
-
-

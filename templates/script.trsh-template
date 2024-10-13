@@ -1,0 +1,20 @@
+#!/bin/bash
+
+source trsh
+
+{{NAME}}_OPTIONS=(
+    sample-op
+)
+
+_{{NAME}}_sample_op_DOC=$(cat <<-END
+    Sample of functionality
+END
+)
+function {{uNAME}}.sample_op() {
+    local args=$@
+    echo "Arguments $@"
+}
+
+cli.define_options "${{{NAME}}_OPTIONS[*]}"
+cli.define_name "{{NAME}}"
+cli.run $@

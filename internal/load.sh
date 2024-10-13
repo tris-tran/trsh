@@ -6,15 +6,17 @@ declare -A _LIB_LOADED
 declare -r _LOAD_INTERNALS=(
     log
     trshell
+    stash
     update-trshell
 )
 
 #List of possible libraries
 declare -r _LOAD_LIBS=(
     utils
+    cli
+    template
     hg
     git
-    cli
 )
 
 function load.import() {

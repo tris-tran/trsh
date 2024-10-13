@@ -1,5 +1,4 @@
 #!/usr/bin/awk -f
-#
 
 BEGIN {
     keyList=0
@@ -7,20 +6,20 @@ BEGIN {
 }
 
 #{{ TAG }}
-/{{[^!] *[^} ]+ *}}/ { 
+/{{[^!] *[^}{ ]+ *}}/ { 
     $0=subMoustacheLine(keyPrefix, $0)
 }
 
 #Conditional or list block
 #{{{# LIST}}
-/{{# *[^} ]+ *}}/ { 
+/{{# *[^}{ ]+ *}}/ { 
     keyPrefix=getMoustacheListKey($0)
     print "LISTOPEN:"keyPrefix
     next
 }
 
 #{{\ END_LIST}}
-/{{\\ *[^} ]+ *}}/ { 
+/{{\\ *[^}{ ]+ *}}/ { 
     keyPrefix=0
     listKey=getMoustacheListKey($0)
     print "LISTCLOSE:"listKey
@@ -28,7 +27,7 @@ BEGIN {
 }
 
 #{{{! COMMENT}}
-/{{! *[^}]+ *}}/ { 
+/{{! *[^}{]+ *}}/ { 
     $0=removeMoustacheTagInLine($0)
 }
 
@@ -48,7 +47,7 @@ function getMoustacheListKey(listTag) {
 }
 
 function subMoustacheLine(keyPrefix, line) {
-    while(match(line, /{{ *[^} ]+ *}}/)) {
+    while(match(line, /{{ *[^}{ ]+ *}}/)) {
         moustacheTag=substr(line, RSTART, RLENGTH)
         varName=substr(moustacheTag, 3, length(moustacheTag)-4)
         varName=removeSpaces(varName)
@@ -71,4 +70,3 @@ function removeSpaces(key) {
     gsub(/^[ \t]+|[ \t]+$/, "", key)
     return key
 }
-
