@@ -5,6 +5,7 @@ declare -A _LIB_LOADED
 
 declare -r _LOAD_INTERNALS=(
     log
+    env
     trshell
     stash
     update-trshell
@@ -22,7 +23,7 @@ declare -r _LOAD_LIBS=(
 
 function load.import() {
     local lib=$1
-    _load.source_lib $TRSHELL_LIBS  $lib
+    _load.source_lib "$TRSH_DIR/lib" $lib
 }
 
 function load.base_init() {

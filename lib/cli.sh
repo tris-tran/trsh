@@ -1,7 +1,7 @@
 _load.load_once cli && return 0
 
-TRSH_CURRENT_OPTIONS=
-TRSH_CURRENT_NAME=
+declare -g TRSH_CURRENT_OPTIONS=
+declare -g TRSH_CURRENT_NAME=
 
 function cli.define_name() {
     local name=$1

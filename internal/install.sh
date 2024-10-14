@@ -5,12 +5,8 @@ function install.sys_install() {
     echo "Sysinstall"
 }
 
-function install.configure_developmen() {
+function install.configure_development() {
     local project=$1
     local stash=$2
     local stashUser=$3
-
-    TRSH_DIR="/home/eochoa/Projects/eochoa-scripts"
-    TRSH_STASH="/home/eochoa/Borrar/test-stash"
-    TRSH_USER="tochoa"
 }

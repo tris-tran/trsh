@@ -3,6 +3,19 @@
 BEGIN {
     keyList=0
     keyPrefix=0
+
+    if (file) {
+        saveFS=FS
+        FS=OFS="="
+        loadProperties(file)
+        FS=OFS=saveFS
+    }
+}
+
+function loadProperties(file) {
+    while(getline < file) {
+        LOCALENV[$1]=$2
+    }
 }
 
 #{{ TAG }}
@@ -58,11 +71,16 @@ function subMoustacheLine(keyPrefix, line) {
 }
 
 function getValueFromKey(keyPrefix, key) {
+    finalKey=key
     if (keyPrefix) {
-        value=ENVIRON["keyPrefix"varName]
-    } else {
-        value=ENVIRON[varName]
-    }   
+        finalKey=keyPrefix varName
+    } 
+
+    value=LOCALENV[finalKey]
+    if ( ! value) {
+        value=ENVIRON[finalKey]
+    }
+
     return value
 }
 

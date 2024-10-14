@@ -3,18 +3,26 @@
 TRSH_DIR="$HOME/.trshell"
 TRSH_DIST="$HOME/.trshell"
 TRSH_USER="$USER"
+TRSHRC="$HOME/.trshrc"
 
 TRSH_STORAGE="$TRSH_DIST/storage"
 
-TRSH_STASH="$TRSH_DIR/storage/test-stash"
-TRSH_STASH_REPO="test-stash"
-TRSH_STASH_REMOTE="git@github.com:tris-tran/${REPO}.git"
+TRSH_STASH="$TRSH_DIR/storage/stash"
+TRSH_STASH_REPO="stash"
+TRSH_STASH_REMOTE="git@github.com:tris-tran/test-stash.git"
 TRSH_STASH_BRANCH="master"
 TRSH_STASH_GIT_REMOTE="origin"
 
-
 LOG_LOGLEVEL="ERROR"
 
+# Move to .trshrc
+TRSH_DIR="/home/eochoa/Projects/eochoa-scripts"
+TRSH_DIST="/home/eochoa/Projects/eochoa-scripts"
+TRSH_USER="tochoa"
+TRSH_STORAGE="$TRSH_DIST/storage"
+TRSH_STASH="$TRSH_DIR/storage/stash"
+
+[[ -f "$TRSHRC" ]] && source $TRSHRC
 source $TRSH_DIR/internal/load.sh
 load.base_init $TRSH_DIR
 load.full_init $TRSH_DIR
@@ -23,7 +31,11 @@ load.full_init $TRSH_DIR
 trshell.init
 trshell.update
 
-#install.configure_development
+env.config "stash.user" "eochoa"
+env.get "stash.user"
+
+install.configure_development
+
 log.trace "Command to run is: [$@]"
 (return 0 2>/dev/null)
 if [ $? -eq 0 ]; then
