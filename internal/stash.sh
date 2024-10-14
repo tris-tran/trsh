@@ -107,9 +107,9 @@ function stash.oneliner() {
 function _stash.init_user() {
     
     rm -rf $TRSH_STASH
-    git init --quiet "$TRSH" >> /dev/null
+    git init --quiet "$TRSH_STASH_REPO" > /dev/null
 
-    pushd $TRSH_STASH >> /dev/null
+    pushd $TRSH_STASH > /dev/null
 
     git remote add origin "$TRSH_STASH_REMOTE"
     git fetch --depth=1 origin

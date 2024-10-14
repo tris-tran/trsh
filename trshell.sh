@@ -1,6 +1,7 @@
 #!/bin/bash
 
 TRSH_DIR="$HOME/.trshell"
+TRSH_DIST="$HOME/.trshell"
 TRSH_USER="$USER"
 
 TRSH_STASH="$TRSH_DIR/storage/stash"
