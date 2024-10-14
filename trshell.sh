@@ -16,10 +16,11 @@ source $TRSH_DIR/internal/load.sh
 load.base_init $TRSH_DIR
 load.full_init $TRSH_DIR
 
+
 trshell.init
 trshell.update
-install.configure_development
 
+#install.configure_development
 log.trace "Command to run is: [$@]"
 (return 0 2>/dev/null)
 if [ $? -eq 0 ]; then

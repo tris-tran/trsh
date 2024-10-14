@@ -2,7 +2,7 @@ _load.load_once install && return 0
 
 
 function install.sys_install() {
-    
+    echo "Sysinstall"
 }
 
 function install.configure_developmen() {
