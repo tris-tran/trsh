@@ -1,6 +1,36 @@
 _load.load_once stash && return 0
 
-_STASH_upload_script_DOC=$(cat <<-END
+_STASH_list_DOC=$(cat <<-END
+    Lists all stash for one user
+END
+)
+function stash.list() {
+    local user=$1
+
+    _stash.init_user
+
+    log.green "User $user stash"
+    log.green "Scripts:"
+    _stash.list_type $user "scripts"
+    log.green "Functions:"
+    _stash.list_type $user "functions"
+    log.green "Oneliners:"
+    _stash.list_type $user "oneliners"
+}
+
+function _stash.list_type() {
+    local user=$1
+    local type=$2
+
+    local stashFolder="$TRSH_STASH/$user/$type"
+    for file in $(find $stashFolder -mindepth 1 -maxdepth 1 -type f -printf "%P\n")
+    do
+        log.green "\t $file"
+    done
+    
+}
+
+_STASH_script_DOC=$(cat <<-END
     Hace el upload de un script
 END
 )
@@ -17,12 +47,11 @@ function stash.script() {
     git.push "$TRSH_STASH" "origin" "master"
 }
 
-_STASH_upload_function_DOC=$(cat <<-END
+_STASH_function_DOC=$(cat <<-END
     Hace el upload de una funcion
 END
 )
 function stash.function() {
-    log.error "Upload function"
     local function=$1
     local fileInProject="$TRSH_USER/functions/$function"
 
@@ -44,12 +73,11 @@ function stash.function() {
     fi
 }
 
-_STASH_upload_oneliner_DOC=$(cat <<-END
+_STASH_oneliner_DOC=$(cat <<-END
     Hace el upload de un oneliner de shell
 END
 )
 function stash.oneliner() {
-    log.error "Uload oneliner"
     local name=$1
     local fileInProject="$TRSH_USER/oneliners/$name"
     local temp=$(mktemp)
@@ -77,10 +105,17 @@ function stash.oneliner() {
 }
 
 function _stash.init_user() {
-    log.red "Stash dir: $TRSH_STASH"
+    
+    rm -rf $TRSH_STASH
+    git init --quiet "$TRSH" >> /dev/null
+
     pushd $TRSH_STASH >> /dev/null
 
-    git merge --no-commit --no-ff "master" > /dev/null
+    git remote add origin "$TRSH_STASH_REMOTE"
+    git fetch --depth=1 origin
+    git checkout -b "$TRSH_STASH_BRANCH" "origin/$TRSH_STASH_BRANCH" 
+
+    #git merge --no-commit --no-ff "master" > /dev/null
 
     mkdir -p $TRSH_USER/functions
     mkdir -p $TRSH_USER/oneliners

@@ -1,24 +1,16 @@
 #!/bin/bash
-#
 
 TRSH_DIR="$HOME/.trshell"
-TRSH_DIR="/home/tristanstille/Projects/tristan-scripts"
+TRSH_USER="$USER"
 
-TRSH_STASH="/home/tristanstille/Borrar/test-stash"
-TRSH_USER="tochoa"
-
-TRSH_DIST="$HOME/Borrar/tristan-scripts"
-TRSH_LIBS="$HOME/Projects/eochoa-scripts"
-#TRSH_DIST="$HOME/Projects/eochoa-scripts"
-#
+TRSH_STASH="$TRSH_DIR/storage/stash"
+TRSH_STASH_REPO="test-stash"
+TRSH_STASH_REMOTE="git@github.com:tris-tran/${REPO}.git"
+TRSH_STASH_BRANCH="master"
+TRSH_STASH_GIT_REMOTE="origin"
 
 
-
-TRSH_REMOTE_URL="git@github.com:tris-tran/tristan-scripts.git"
-TRSH_REMOTE="origin"
-TRSH_BRANCH="master"
-
-LOG_LOGLEVEL="TRACE"
+LOG_LOGLEVEL="ERROR"
 
 source $TRSH_DIR/internal/load.sh
 load.base_init $TRSH_DIR
@@ -26,6 +18,7 @@ load.full_init $TRSH_DIR
 
 trshell.init
 trshell.update
+install.configure_development
 
 log.trace "Command to run is: [$@]"
 (return 0 2>/dev/null)
@@ -43,6 +36,7 @@ TRSH_OPTIONS=(
     stash-script
     stash-function
     stash-oneliner
+    stash-list
 )
 
 function trsh.create() {
@@ -70,7 +64,7 @@ function trsh.run() {
     if ! command -v $command 2>&1 > /dev/null; then
         popd > /dev/null
         log.red "Running with bash: $@"
-        bash $@
+        source $@
     else
         popd > /dev/null
         log.red "Running with eval: $@"
@@ -78,6 +72,10 @@ function trsh.run() {
     fi
 
     exit $?
+}
+
+function trsh.stash_list() {
+    stash.list $@
 }
 
 function trsh.stash_script() {

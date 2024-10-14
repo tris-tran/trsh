@@ -15,5 +15,6 @@ function trshell.update() {
         exit 0
     fi
 )& > /dev/null
+wait
 }
 

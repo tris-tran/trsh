@@ -1,8 +1,6 @@
-
 _load.load_once log && return 0
 
-LOG_LOGLEVEL="TRACE"
-
+#LOG_LOGLEVEL="TRACE"
 LOG_CONFIG_SHOW_TRACE=false
 
 LOG_ERROR_LOGLEVEL="ERROR"
@@ -20,7 +18,7 @@ function log.line() {
 }
 
 function log.red() {
-    echo $LOG_RED $@
+    _log.color $LOG_RED $@
 }
 
 function log.orange() {
@@ -36,7 +34,7 @@ function _log.color() {
     shift
 
     echo -n $color
-    echo $@
+    echo -e "$@"
     echo -n $LOG_COLOR_RESET
 }
 

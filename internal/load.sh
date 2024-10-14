@@ -8,6 +8,7 @@ declare -r _LOAD_INTERNALS=(
     trshell
     stash
     update-trshell
+    install
 )
 
 #List of possible libraries

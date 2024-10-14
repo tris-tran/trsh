@@ -1,7 +1,7 @@
 #!/bin/bash
 
 TRSH="$HOME/.trshell"
-REPO="tristan-scripts"
+REPO="trshell"
 REMOTE="git@github.com:tris-tran/${REPO}.git"
 BRANCH="master"
 
@@ -35,8 +35,8 @@ git init --quiet "$TRSH" && pushd "$TRSH" > /dev/null \
     && git config receive.fsck.zeroPaddedFilemode ignore \
     && git remote add origin "$REMOTE" \
     && git fetch --depth=1 origin \
-    && git checkout -b "$BRANCH" "origin/$BRANCH" 
-    || {
+    && git checkout -b "$BRANCH" "origin/$BRANCH" || 
+    {
         [ ! -d "$TRSH" ] || {
         popd > /dev/null
             rm -rf "$TRSH" 2>/dev/null
