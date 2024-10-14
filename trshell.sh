@@ -4,7 +4,9 @@ TRSH_DIR="$HOME/.trshell"
 TRSH_DIST="$HOME/.trshell"
 TRSH_USER="$USER"
 
-TRSH_STASH="$TRSH_DIR/storage/stash"
+TRSH_STORAGE="$TRSH_DIST/storage"
+
+TRSH_STASH="$TRSH_DIR/storage/test-stash"
 TRSH_STASH_REPO="test-stash"
 TRSH_STASH_REMOTE="git@github.com:tris-tran/${REPO}.git"
 TRSH_STASH_BRANCH="master"

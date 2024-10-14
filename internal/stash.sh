@@ -105,7 +105,8 @@ function stash.oneliner() {
 }
 
 function _stash.init_user() {
-    
+    pushd $TRSH_STORAGE > /dev/null
+
     rm -rf $TRSH_STASH
     git init --quiet "$TRSH_STASH_REPO" > /dev/null
 
@@ -120,6 +121,8 @@ function _stash.init_user() {
     mkdir -p $TRSH_USER/functions
     mkdir -p $TRSH_USER/oneliners
     mkdir -p $TRSH_USER/scripts
+
+    popd > /dev/null
 
     popd > /dev/null
 }
