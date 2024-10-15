@@ -1,0 +1,18 @@
+
+no tag
+{{! Comment }}Linea con comentario
+inicio {{! Comment }}Linea con comentario
+inicio{{! Comment }}Linea con comentario
+
+asd {{{NAME}}} asd
+asd{{NAME}}asd
+
+asd {{NAME}} {{! esto es un comentario}} second {{! esto es un comentario}}
+
+no line
+
+{{{NAME}}
+
+{{#PERSON}} {{NAME}} {{\PERSON}}
+
+{{NAME}}
