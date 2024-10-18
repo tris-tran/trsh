@@ -1,8 +1,7 @@
 _load.load_once trshell && return 0
 
 function trshell.init() {
-    echo "SASD"
-
+:
 }
 
 function trshell.update() {

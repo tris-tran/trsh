@@ -1,0 +1,15 @@
+#!/bin/bash
+
+source trsh
+
+
+LOG_LOGLEVEL="TRACE"
+
+VCS_OPTIONS=(
+    outgoing
+)
+
+cli.define_options "${VCS_OPTIONS[*]}"
+cli.define_name "VCS"
+
+cli.run $@ $PWD

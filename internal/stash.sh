@@ -30,6 +30,23 @@ function _stash.list_type() {
     
 }
 
+
+function stash.install_script() {
+    local user=$1
+    local script=$2
+
+    mkdir -p "$TRSH_BIN"
+
+    local scriptFile="$TRSH_STASH/$user/scripts/$script"
+
+    if [ -f "$scriptFile" ]; then
+        cp "$scriptFile" "$TRSH_BIN/$script" || utils.die
+        chmod +x "$TRSH_BIN/$script" || utils.die
+    else
+        log.error "No script $script for user $user"
+    fi
+}
+
 _STASH_script_DOC=$(cat <<-END
     Hace el upload de un script
 END

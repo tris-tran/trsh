@@ -5,6 +5,7 @@ BEGIN {
     OFS=""
 
     ESCAPE_TEST=")(}{"    
+    print ESCAPE_TEST " Escape: " escapeRegex(ESCAPE_TEST)
     if (match(ESCAPE_TEST, escapeRegex(ESCAPE_TEST))) {
     } else {
         print "CANNOT CONTINUE IMPOSSIBLE TO ESCAPE"
@@ -38,8 +39,10 @@ function escapeRegex(regex) {
     split(regex, chars, "")
     for(i=1; i<=length(regex); i++) { 
         c=chars[i]
-        if (c == "(") c="\("
-        else if (c == ")") c="\)"
+        if (c == "(") c="[\\\(]"
+        else if (c == ")") c="[\\\)]"
+        else if (c == "{") c="[\\\{]"
+        else if (c == "}") c="[\\\}]"
         
         result = result c
     }

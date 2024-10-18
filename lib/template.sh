@@ -1,6 +1,6 @@
 _load.load_once template && return 0
 
-_TEMPLATE_AWK_MOUSTACHE=$(cat ./lib/template.awk)
+_TEMPLATE_AWK_MOUSTACHE=$(cat "$TRSH_DIST/lib/template.awk")
 _TEMPLATE_EXTENSION=".trsh-template"
 
 function _template.moustache_awk() {

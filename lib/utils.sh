@@ -18,6 +18,7 @@ function utils.die() {
     log.error "${BASH_SOURCE[1]}: line: ${BASH_LINENO[0]}: funcname:${FUNCNAME[1]} \"$message\""
     exit 1
 }
+
 function utils.error_and_exit() {
     if [ $? -ne 0 ]; then
         log.error $@

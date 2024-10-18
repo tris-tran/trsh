@@ -4,6 +4,7 @@
 declare -A _LIB_LOADED
 
 declare -r _LOAD_INTERNALS=(
+    colors
     log
     env
     trshell
@@ -15,11 +16,54 @@ declare -r _LOAD_INTERNALS=(
 #List of possible libraries
 declare -r _LOAD_LIBS=(
     utils
+    trap
     cli
     template
     hg
     git
+    vcs
 )
+
+function load.package() {(
+    loadFrom=$1
+
+    _LIB_LOADED=( )
+
+    allLibs=( ${_LOAD_INTERNALS[@]} ${_LOAD_LIBS[@]} )
+
+    for lib in ${allLibs[@]}
+    do
+        _load.load_once "$lib"
+
+        internalLibPath="$loadFrom/internal/${lib}.sh"
+        normallibPath="$loadFrom/lib/${lib}.sh"
+
+        echo "function lib.$lib() {"
+        echo "set -a"
+        if [ -f "$internalLibPath" ]; then
+            cat $internalLibPath
+        elif [ -f "$normallibPath" ]; then
+            cat $normallibPath
+        else
+            exit 1
+        fi
+        echo "set +a"
+        echo "}"
+
+    done
+
+    declare -f _load.load_once
+
+    echo "function load.import() {
+        "lib.\$lib"
+    }"
+
+    for lib in ${allLibs[@]}
+    do
+        echo "lib.$lib"
+    done
+    ); return $?
+}
 
 function load.import() {
     local lib=$1

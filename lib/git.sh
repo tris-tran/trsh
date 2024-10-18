@@ -1,5 +1,31 @@
-
 _load.load_once git && return 0
+
+function git.outgoing() {
+    local project=$1
+    local origin=$2
+    local branch=$3
+
+    if [ -z $origin ]; then
+        origin="origin"
+    fi
+
+    if [ -z $branch ]; then
+        git.branch $project
+        branch=$_r
+    fi
+
+    pushd $project > /dev/null
+    git fetch > /dev/null
+    git log $origin/$branch..$branch
+    popd > /dev/null
+}
+
+function git.branch() {
+    local project=$1
+    pushd $project > /dev/null
+    _r=$(git rev-parse --abbrev-ref HEAD)
+    popd > /dev/null
+}
 
 function git.push() {
     local project=$1
@@ -105,3 +131,29 @@ function git.clone_in_folder() {
     fi
 }
 
+function git.is_git_repo() {
+    local folder=$1
+    git.get_base $folder
+    return $?
+}
+
+
+function git.get_base() {
+    local folder=$1
+    local baseGit=".git"
+
+    pushd $folder > /dev/null
+    
+    local isGit=1
+    if [ -d "$baseGit" ]; then
+        :
+        isGit=0
+    else
+        baseGit=$(git rev-parse --git-dir 2> /dev/null)
+        isGit=$?
+    fi
+
+    _r=$baseGit
+    popd > /dev/null
+    return $isGit
+}

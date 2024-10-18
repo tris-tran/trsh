@@ -1,5 +1,9 @@
 _load.load_once hg && return 0
 
+function hg.outgoing() {
+    hg outgoing
+}
+
 function hg.get_revision_from_project() {
     local projectUrl=$1
     local project=$2

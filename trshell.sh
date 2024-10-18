@@ -4,6 +4,7 @@ TRSH_DIR="$HOME/.trshell"
 TRSH_DIST="$HOME/.trshell"
 TRSH_USER="$USER"
 TRSHRC="$HOME/.trshrc"
+TRSH_BIN="$TRSH_DIST/bin"
 
 TRSH_STORAGE="$TRSH_DIST/storage"
 
@@ -16,11 +17,23 @@ TRSH_STASH_GIT_REMOTE="origin"
 LOG_LOGLEVEL="ERROR"
 
 # Move to .trshrc
+TRSH_STASH_REMOTE="/home/eochoa/Projects/MIERDA/stash-gestiona"
 TRSH_DIR="/home/eochoa/Projects/eochoa-scripts"
 TRSH_DIST="/home/eochoa/Projects/eochoa-scripts"
 TRSH_USER="tochoa"
 TRSH_STORAGE="$TRSH_DIST/storage"
 TRSH_STASH="$TRSH_DIR/storage/stash"
+TRSH_BIN="$TRSH_DIST/bin"
+LOG_LOGLEVEL="ERROR"
+
+export PATH="$PATH:$TRSH_BIN"
+
+TRSH_SCRIPT_LUNCH_PWD="$PWD"
+function _trsh.cleanup() {
+    if [ "$PWD" != "$TRSH_SCRIPT_LUNCH_PWD" ]; then
+        cd "$TRSH_SCRIPT_LUNCH_PWD"
+    fi
+}
 
 [[ -f "$TRSHRC" ]] && source $TRSHRC
 source $TRSH_DIR/internal/load.sh
@@ -29,17 +42,14 @@ load.full_init $TRSH_DIR
 
 
 trshell.init
-trshell.update
-
-env.config "stash.user" "eochoa"
-env.get "stash.user"
+#trshell.update
 
 install.configure_development
 
 log.trace "Command to run is: [$@]"
 (return 0 2>/dev/null)
 if [ $? -eq 0 ]; then
-    log.green "Loading without script"
+    log.trace "Loading without script"
     return 0
 fi
 
@@ -53,6 +63,7 @@ TRSH_OPTIONS=(
     stash-function
     stash-oneliner
     stash-list
+    stash-install
 )
 
 function trsh.create() {
@@ -79,11 +90,11 @@ function trsh.run() {
     pushd / > /dev/null
     if ! command -v $command 2>&1 > /dev/null; then
         popd > /dev/null
-        log.red "Running with bash: $@"
+        log.trace "Running with bash: $@"
         source $@
     else
         popd > /dev/null
-        log.red "Running with eval: $@"
+        log.trace "Running with eval: $@"
         eval $@
     fi
 
@@ -106,6 +117,11 @@ function trsh.stash_oneliner() {
     stash.script $@
 }
 
+function trsh.stash_install() {
+    stash.install_script $@
+}
+
+echo "function___"
 cli.define_options "${TRSH_OPTIONS[*]}"
 cli.define_name "TRSH"
 
