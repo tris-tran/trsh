@@ -37,7 +37,7 @@ function vcs.outgoing() {
 
     case $type in
         hg)
-            hg.outgoing
+            hg.outgoing $project
         ;;
 
         git)

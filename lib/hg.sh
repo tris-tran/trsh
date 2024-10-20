@@ -1,7 +1,14 @@
 _load.load_once hg && return 0
 
 function hg.outgoing() {
+    local project=$1
+
+    pushd $project > /dev/null
+
     hg outgoing
+
+    popd > /dev/null
+
 }
 
 function hg.get_revision_from_project() {

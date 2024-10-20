@@ -1,4 +1,3 @@
-
 _load.load_once utils && return 0
 
 
@@ -24,4 +23,14 @@ function utils.error_and_exit() {
         log.error $@
         exit 1
     fi
+}
+
+function utils.random() {
+    local nchars=$1
+    _r=$(tr -dc a-zA-Z0-9 < /dev/urandom | head -c $nchars )
+}
+
+function utils.random_num() {
+    local nchars=$1
+    _r=$(tr -dc 0-9 < /dev/urandom | head -c $nchars )
 }

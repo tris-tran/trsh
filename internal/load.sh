@@ -24,83 +24,56 @@ declare -r _LOAD_LIBS=(
     vcs
 )
 
-function load.package() {(
-    loadFrom=$1
-
-    _LIB_LOADED=( )
-
-    allLibs=( ${_LOAD_INTERNALS[@]} ${_LOAD_LIBS[@]} )
-
-    for lib in ${allLibs[@]}
-    do
-        _load.load_once "$lib"
-
-        internalLibPath="$loadFrom/internal/${lib}.sh"
-        normallibPath="$loadFrom/lib/${lib}.sh"
-
-        echo "function lib.$lib() {"
-        echo "set -a"
-        if [ -f "$internalLibPath" ]; then
-            cat $internalLibPath
-        elif [ -f "$normallibPath" ]; then
-            cat $normallibPath
-        else
-            exit 1
-        fi
-        echo "set +a"
-        echo "}"
-
-    done
-
-    declare -f _load.load_once
-
-    echo "function load.import() {
-        "lib.\$lib"
-    }"
-
-    for lib in ${allLibs[@]}
-    do
-        echo "lib.$lib"
-    done
-    ); return $?
-}
-
 function load.import() {
     local lib=$1
-    _load.source_lib "$TRSH_DIR/lib" $lib
+
+    if [ -z "$chain" ]; then
+        chain=( $lib )
+    else
+        for chained in "${chain[@]}"
+        do
+            if [[ "$lib" == "$chained" ]]; then
+                echo "Circular dependecy detected for lib $lib chain [${chain[@]}]"
+                exit 1
+            fi
+        done
+
+        chain=( $chain $lib )
+    fi
+
+    _load.source_lib $lib
+
+    unset chain[${#chain[@]}-1]
 }
 
 function load.base_init() {
-    local libPath=$1
-    _load.libs $libPath "${_LOAD_INTERNALS[*]}"
+    _load.libs "${_LOAD_INTERNALS[@]}"
 }
 
 function load.full_init() {
-    local libPath=$1
-    load.base_init $libPath
-    _load.libs $libPath "${_LOAD_LIBS[*]}"
+    load.base_init 
+    _load.libs "${_LOAD_LIBS[@]}"
 }
 
 function _load.libs() {
-    local libPath=$1
-    shift
     local libs=($@) 
     for lib in ${libs[@]}
     do
-        _load.source_lib $libPath $lib
+        _load.source_lib $lib
     done
 
 }
 function _load.source_lib() {
-    local libPath=$1
-    local lib=$2
+    local lib=$1
 
+    local libPath="$TRSH_DIR"
     local libFile="$libPath/lib/${lib}.sh"
 
     if [ ! -f "$libFile" ]; then 
         libFile="$libPath/internal/${lib}.sh"
         if [ ! -f "$libFile" ]; then
-            echo "No file lib found for ${lib}.sh"
+            echo "${FUNCNAME[@]}"
+            echo "No file lib found for ${lib}.sh in $libPath"
             exit 1
         fi
     fi
@@ -126,4 +99,9 @@ function _load.load_once() {
     _LIB_LOADED[$lib]=true
     
     return 1
+}
+
+function _load.random() {
+    local nchars=$1
+    _r=$(tr -dc a-zA-Z0-9 < /dev/urandom | head -c $nchars )
 }

@@ -1,7 +1,4 @@
-#!/bin/bash
-
-source trsh
-
+#!/usr/bin/env trsh
 
 LOG_LOGLEVEL="TRACE"
 
