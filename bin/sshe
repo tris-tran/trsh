@@ -1,0 +1,91 @@
+#!/bin/bash
+
+THEME=/home/tristanstille/Projects/trsh/themes/powerline.sh
+. $THEME
+
+function _sshe.load_func() {
+    declare -f $1
+    echo "export -f $1
+"
+}
+
+function sshe() {
+    SSHE_DEPTH=$(($SSHE_DEPTH + 1))
+    [[ "$(type -t sshe.set_sshe)" == "function" ]] && sshe.set_sshe
+    echo $SSHE_DEPTH
+    ssh -tt $@ "$SSHE; export -f _sshe; _sshe"
+}
+
+function sshe.import() {
+    alias
+}
+
+SSHE_DEPTH=0
+export SSHE_DEPTH
+
+SSHE=$(cat << END
+function _sshe() {
+    SSHE_DEPTH=$SSHE_DEPTH
+    SSHE_DEPTH=\$SSHE_DEPTH
+    export SSHE_DEPTH
+
+    $(_sshe.load_func theme.define)
+    $(_sshe.load_func theme.eval)
+    $(_sshe.load_func sshe.import)
+    $(_sshe.load_func sshe)
+
+    function sshe.load_theme() {
+        theme.define
+        theme.eval
+        export PS1
+    }
+    export -f sshe.load_theme
+
+    function sshe.set_sshe() {
+        # With this and adding the update of variables
+        # I have have the autocreation
+        SSHE="\$(declare -f _sshe)"
+        echo "\$SSHE"
+        return 0
+
+        NEW_LINE="
+"
+        function _sshe.add_func() {
+            SSHE=\$SSHE"\$(declare -f \$1)\$NEW_LINE"
+            SSHE=\$SSHE"export -f \$1\$NEW_LINE"
+        }
+
+        function _sshe.add_line() {
+            SSHE=\$SSHE"\$1\$NEW_LINE"
+        }
+
+
+        SSHE="function _sshe() {\$NEW_LINE"
+
+        _sshe.add_line "SSHE_DEPTH=\$SSHE_DEPTH"
+        _sshe.add_line "export SSHE_DEPTH"
+
+        _sshe.add_func theme.define
+        _sshe.add_func theme.eval 
+        _sshe.add_func sshe.load_theme
+        _sshe.add_func sshe
+        _sshe.add_func sshe.set_sshe
+
+        SSHE=\$SSHE"sshe.load_theme\$NEW_LINE"
+        SSHE=\$SSHE"exec bash  --norc --noprofile -i\$NEW_LINE"
+        SSHE=\$SSHE"}"
+
+        echo "\$SSHE"
+    }
+    export -f sshe.set_sshe
+
+    sshe.load_theme
+    exec bash  --norc --noprofile -i
+}
+END
+)
+
+eval "$SSHE"
+SSHE=$(declare -f _sshe)
+
+sshe $@
