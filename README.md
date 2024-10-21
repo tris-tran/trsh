@@ -7,6 +7,7 @@
 - [ ] Add imports to library to only import the needed parts
     - [ ] Improve the package to only import the needed parts of library
         a imports should be declared in a special function.
+- [ ] COmplete validations in library db
 
 ## Creating basic script with the framework
 

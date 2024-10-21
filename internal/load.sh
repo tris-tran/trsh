@@ -16,6 +16,7 @@ declare -r _LOAD_INTERNALS=(
 #List of possible libraries
 declare -r _LOAD_LIBS=(
     utils
+    db
     trap
     cli
     template
