@@ -11,6 +11,7 @@ declare -r _LOAD_INTERNALS=(
     stash
     update-trshell
     install
+    doc
 )
 
 #List of possible libraries

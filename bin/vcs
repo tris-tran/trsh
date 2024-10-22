@@ -2,9 +2,65 @@
 
 LOG_LOGLEVEL="TRACE"
 
+declare -A VCS_REMOTES
+VCS_REMOTES[hg-gestiona]="ssh://hg@hg-central.g3stiona.com"
+VCS_REMOTES[git-gestiona]="ssh://git@git-central.g3stiona.com"
+
+VCS_DIR="$TRSH_DIST/storage/vcs"
+mkdir -p $VCS_DIR
+
 VCS_OPTIONS=(
     outgoing
+    clone
+    pull
+    update-local
+    describe
 )
+
+function vcs.describe() {
+    doc.library
+}
+
+_VCS_outgoing_DOC=$(cat <<-END
+    Shows changes not in remote server
+END
+)
+function vcs.outgoing() {
+    local project=$1
+    shift
+    if [ ! -d $project ]; then
+        project="."
+    fi
+    local origin=$1
+    local branch=$2
+
+    _vcs.dispatch $project "outgoing" $origin $branch
+}
+
+
+function vcs.clone() {
+    local project=$1
+    local type=$2
+    local remote=$3
+
+    local projectUrl="${VCS_REMOTES[hg-gestiona]}/$project"
+    local projectLocalUrl="${VCS_DIR}/$project"
+
+    echo "cloning $project in $VCS_DIR type $type"
+    
+    pushd $VCS_DIR > /dev/null
+    hg.clone_and_update $projectUrl $project
+    popd > /dev/null
+
+    if [[ ! -d "$project" ]]; then
+        hg.clone_in_folder $projectLocalUrl $project
+        echo -e "[paths]\ngestiona = $projectUrl" >> "$project/.hg/hgrc"
+    else
+        log.error "Error while cloning, folder $project already exists"
+        exit 1
+    fi
+
+}
 
 cli.define_options "${VCS_OPTIONS[*]}"
 cli.define_name "VCS"

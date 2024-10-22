@@ -13,10 +13,13 @@ LOG_GREEN=$(tput setaf 2)
 LOG_ORANGE=$(tput setaf 3)
 LOG_COLOR_RESET=$(tput sgr0)
 
+
+# Logs an empty line
 function log.line() {
     echo ""
 }
 
+# Prints a string in red with echo
 function log.red() {
     _log.color $LOG_RED $@
 }
@@ -59,6 +62,11 @@ function log.trace() {
     fi
 }
 
+
+_LOG__print_log_DOC=$(cat <<-END
+    Prints logs with echo, used internally
+END
+)
 function _log.print_log() {
     local funcPath="${FUNCNAME[@]:1}"
     local level=$1

@@ -2,13 +2,18 @@ _load.load_once hg && return 0
 
 function hg.outgoing() {
     local project=$1
-
     pushd $project > /dev/null
-
     hg outgoing
-
     popd > /dev/null
+}
 
+function hg.clone_and_update() {
+    local projectUrl=$1
+    local project=$2
+
+    hg.clone_in_folder $projectUrl $project
+    hg.update_project $project
+    utils.error_and_exit "Cannot update project $project"
 }
 
 function hg.get_revision_from_project() {

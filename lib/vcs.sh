@@ -16,32 +16,27 @@ function vcs.get_repo_type() {
     fi
 }
 
-
-_VCS_outgoing_DOC=$(cat <<-END
-    Shows changes not in remote server
-END
-)
-function vcs.outgoing() {
+function _vcs.dispatch() {
     local project=$1
-    local origin=$2
-    local branch=$3
+    local function=$2
+    shift 2
 
-    if [ ! -d $project ]; then
-        project="."
-        origin=$1
-        branch=$2
-    fi
-    
+
     vcs.get_repo_type $project
     local type=$_r
 
+    if [[ "$(type -f "${type}.${function}")" != "function" ]]; then
+        log.error "No function $function for repositoy type $type" 
+        return 1
+    fi
+
     case $type in
         hg)
-            hg.outgoing $project
+            hg.$function $project $@
         ;;
 
         git)
-            git.outgoing $project $origin $branch
+            git.$function $project $@
         ;;
 
         *)
