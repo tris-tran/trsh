@@ -45,6 +45,12 @@ function _trsh.cleanup() {
 
 [[ -f "$TRSHRC" ]] && source $TRSHRC
 source $TRSH_DIR/internal/load.sh
+
+require trsh "
+    log
+    tagging
+" || exit 1
+
 load.base_init $TRSH_DIR
 load.full_init $TRSH_DIR
 

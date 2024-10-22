@@ -1,9 +1,11 @@
-_load.load_once log && return 0
+require log "
+    tagging
+" || return 0
 
-#LOG_LOGLEVEL="TRACE"
 LOG_CONFIG_SHOW_TRACE=false
 
 LOG_ERROR_LOGLEVEL="ERROR"
+LOG_WARN_LOGLEVEL="WARN"
 LOG_INFO_LOGLEVEL="INFO"
 LOG_DEBUG_LOGLEVEL="DEBUG"
 LOG_TRACE_LOGLEVEL="TRACE"
@@ -41,6 +43,10 @@ function _log.color() {
     echo -n $LOG_COLOR_RESET
 }
 
+function log.warn() {
+    _log.print_log $LOG_WARN_LOGLEVEL $@
+}
+
 
 function log.error() {
     _log.print_log $LOG_ERROR_LOGLEVEL $@
@@ -72,9 +78,9 @@ function _log.print_log() {
     local level=$1
     echo -n $LOG_GREEN
     if [ $LOG_CONFIG_SHOW_TRACE = true ]; then
-        echo "$level" ": [" "$funcPath" "] \"${*:2}\"" $LOG_COLOR_RESET
+        echo "$level" ": [" "$funcPath" "] ${*:2}" $LOG_COLOR_RESET
     else
-        echo "$level" ": \"${*:2}\"" $LOG_COLOR_RESET
+        echo "$level" ": ${*:2}" $LOG_COLOR_RESET
     fi
 }
 

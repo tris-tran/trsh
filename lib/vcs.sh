@@ -1,4 +1,10 @@
-_load.load_once vcs && return 0
+
+require vcs "
+    utils
+    log
+    hg
+    git
+" || return 0
 
 VCS_TYPE_HG="hg"
 VCS_TYPE_GIT="git"

@@ -26,7 +26,40 @@ declare -r _LOAD_LIBS=(
     vcs
 )
 
+function require() {
+    local lib=$1
+    local imports=$2
+
+    echo "$lib"
+
+    if [ -z "$chain" ]; then
+        chain=( $lib )
+    else
+        for chained in "${chain[@]}"
+        do
+            if [[ "$lib" == "$chained" ]]; then
+                echo "Circular dependecy detected for lib $lib chain [${chain[@]}]"
+                exit 1
+            fi
+        done
+
+        chain=( $chain $lib )
+
+    fi
+
+    _load.load_once $lib && return 1
+
+    for import in ${imports[@]}
+    do
+        _load.source_lib $lib || exit 1
+    done
+
+    unset chain[${#chain[@]}-1]
+}
+
 function load.import() {
+    @deprecated
+
     local lib=$1
 
     if [ -z "$chain" ]; then
@@ -43,16 +76,22 @@ function load.import() {
         chain=( $chain $lib )
     fi
 
-    _load.source_lib $lib
+    _load.source_lib $lib 
+    local r=$?
 
     unset chain[${#chain[@]}-1]
+    return $r
 }
 
 function load.base_init() {
+    @deprecated
+
     _load.libs "${_LOAD_INTERNALS[@]}"
 }
 
 function load.full_init() {
+    @deprecated
+
     load.base_init 
     _load.libs "${_LOAD_LIBS[@]}"
 }
@@ -107,3 +146,5 @@ function _load.random() {
     local nchars=$1
     _r=$(tr -dc a-zA-Z0-9 < /dev/urandom | head -c $nchars )
 }
+
+

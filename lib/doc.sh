@@ -1,11 +1,16 @@
-_load.load_once doc && return 0
+
+require doc "
+    tagging
+" || return 0
 
 function doc.library() {
+    @deprecated
 
     local loadFrom=$TRSH_DIST
     
     allLibs=( ${_LOAD_INTERNALS[@]} ${_LOAD_LIBS[@]} )
 
+    allFunctions=""
     for lib in ${allLibs[@]}
     do
         internalLibPath="$loadFrom/internal/${lib}.sh"
@@ -18,7 +23,12 @@ function doc.library() {
             log.red "WTF $lib"
             exit 1
         fi
+        allFunctions+=$'\n'"$_r"
     done 
+
+    echo "$allFunctions" | LC_COLLATE=C sort -r > $TRSH_DIST/doc/all-functions.md
+
+
 }
 
 function doc.describe() {
@@ -27,6 +37,7 @@ function doc.describe() {
 
     comd=$(cat <<- END
     function _load.load_once(){ return 1; }
+    function require() { return 0; }
     source $script
     
     declare -F | awk -v lib=$lib '
@@ -35,11 +46,12 @@ function doc.describe() {
     '
 END
 )
-    echo "# Functions"
     libFunctions=$(env -i bash -c "$comd" 2>/dev/null)
+
+    echo "# Functions"
     for function in $libFunctions
     do
-        echo "- [$function](#$function)"
+        echo "- [$function]($function)"
     done
 
     awk 'BEGIN { FS=" |[(]"; nAccC=0 }
@@ -52,4 +64,5 @@ END
         }
     }' $script
 
-    }
+    _r="$libFunctions"
+}
