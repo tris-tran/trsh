@@ -31,7 +31,7 @@ function _vcs.dispatch() {
     vcs.get_repo_type $project
     local type=$_r
 
-    if [[ "$(type -f "${type}.${function}")" != "function" ]]; then
+    if [[ "$(type -t "${type}.${function}")" != "function" ]]; then
         log.error "No function $function for repositoy type $type" 
         return 1
     fi

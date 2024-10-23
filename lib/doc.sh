@@ -1,6 +1,5 @@
 
 require doc "
-    tagging
 " || return 0
 
 function doc.library() {

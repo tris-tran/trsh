@@ -3,8 +3,7 @@
 LOG_LOGLEVEL="TRACE"
 
 declare -A VCS_REMOTES
-VCS_REMOTES[hg-gestiona]="ssh://hg@hg-central.g3stiona.com"
-VCS_REMOTES[git-gestiona]="ssh://git@git-central.g3stiona.com"
+VCS_REMOTES[hg-local]="urllocal"
 
 VCS_DIR="$TRSH_DIST/storage/vcs"
 mkdir -p $VCS_DIR
@@ -14,11 +13,11 @@ VCS_OPTIONS=(
     clone
     pull
     update-local
-    describe
 )
 
-function vcs.describe() {
-    doc.library
+function vcs.register_alias() {
+    _vcs.register_alias hg pull vcs.hg.alias.pull
+    _vcs.register_alias git pull vcs.git.alias.pull
 }
 
 _VCS_outgoing_DOC=$(cat <<-END
@@ -59,7 +58,6 @@ function vcs.clone() {
         log.error "Error while cloning, folder $project already exists"
         exit 1
     fi
-
 }
 
 cli.define_options "${VCS_OPTIONS[*]}"

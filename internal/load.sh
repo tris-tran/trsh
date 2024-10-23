@@ -30,7 +30,7 @@ function require() {
     local lib=$1
     local imports=$2
 
-    echo "$lib"
+    _load.load_once $lib && return 1
 
     if [ -z "$chain" ]; then
         chain=( $lib )
@@ -47,7 +47,6 @@ function require() {
 
     fi
 
-    _load.load_once $lib && return 1
 
     for import in ${imports[@]}
     do
@@ -56,6 +55,7 @@ function require() {
 
     unset chain[${#chain[@]}-1]
 }
+
 
 function load.import() {
     @deprecated
@@ -147,4 +147,7 @@ function _load.random() {
     _r=$(tr -dc a-zA-Z0-9 < /dev/urandom | head -c $nchars )
 }
 
+function @deprecated() {
+:
+}
 

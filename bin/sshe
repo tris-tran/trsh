@@ -1,29 +1,74 @@
 #!/bin/bash
 
-THEME=$HOME/Projects/trsh/themes/powerline.sh
+THEME=$HOME/Projects/trsh/themes/tochoa.sh
 . $THEME
 
-SSHE_DEPTH=0
+declare -A SSHE_HOSTS
+SSHE_HOSTS[tochoa]="tochoa@localhost"
 
+
+#Empty function we send to remote
+function sshe.hosts() {
+:
+}
+
+SSHE_DEPTH=0
 function sshe() {
+    # We make the global variable local to send over ssh and keep our copy
+    local SSHE_DEPTH=$SSHE_DEPTH
+    local host=$1
+    if [[ ! "$1" =~ "@" ]]; then
+        sshe.hosts
+        host="${SSHE_HOSTS[$1]}"
+    fi
+
     SSHE_DEPTH=$(($SSHE_DEPTH + 1))
     [[ "$(type -t sshe.set_sshe)" == "function" ]] && sshe.set_sshe
-    ssh -tt $@ "$SSHE; export -f _sshe; _sshe $SSHE_DEPTH"
+    ssh -tt $host "$SSHE; export -f _sshe; _sshe $SSHE_DEPTH"
 }
 
 function sshe.import() {
-    alias
+:
 }
+
+function _sshe.alias_func() {(
+    echo "function sshe.alias() {"
+    source ~/.bashrc
+    for alias in ${!BASH_ALIASES[@]}
+    do
+        echo "function $alias() { env -i bash -c \"${BASH_ALIASES[$alias]}\" ; }"
+        echo "export -f $alias"
+    done
+    echo "}"
+)}
 
 function _sshe.load_func() {
     declare -f $1
     echo "export -f $1"
 }
 
+# Creates the function declaration of all original host possible hosts by name
+function _sshe.hosts_func() {
+    echo "function sshe.hosts() {"
+    echo "declare -g -A SSHE_HOSTS"
+    for key in ${!SSHE_HOSTS[@]}
+    do
+        echo "SSHE_HOSTS[$key]=\"${SSHE_HOSTS[$key]}\""
+    done
+    echo "export SSHE_HOSTS"
+    echo "}"
+}
+
 SSHE=$(cat << END
 function _sshe() {
     SSHE_DEPTH=\$1
     export SSHE_DEPTH
+
+    $(_sshe.hosts_func)
+    export -f sshe.hosts
+
+    $(_sshe.alias_func)
+    export -f sshe.alias
 
     $(_sshe.load_func theme.define)
     $(_sshe.load_func theme.eval)
@@ -44,8 +89,9 @@ function _sshe() {
     }
     export -f sshe.set_sshe
 
+    sshe.alias
     sshe.load_theme
-    exec bash  --norc --noprofile -i
+    exec bash  --norc --noprofile -i 
 }
 END
 )

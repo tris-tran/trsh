@@ -1,5 +1,4 @@
 require log "
-    tagging
 " || return 0
 
 LOG_CONFIG_SHOW_TRACE=false
