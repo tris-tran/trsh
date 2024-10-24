@@ -1,36 +1,21 @@
 
 # Array with loaded libs to prevent multiple loads of one library
 # in the same script
-declare -A _LIB_LOADED
+declare -g -A _LIB_LOADED
 
 declare -r _LOAD_INTERNALS=(
-    colors
-    log
-    env
-    trshell
-    stash
-    update-trshell
-    install
-    doc
+    
 )
 
 #List of possible libraries
 declare -r _LOAD_LIBS=(
-    utils
-    db
-    trap
-    cli
-    template
-    hg
-    git
-    vcs
 )
 
 function require() {
     local lib=$1
     local imports=$2
 
-    _load.load_once $lib && return 1
+    _load.is_loaded $lib && return 0
 
     if [ -z "$chain" ]; then
         chain=( $lib )
@@ -39,6 +24,7 @@ function require() {
         do
             if [[ "$lib" == "$chained" ]]; then
                 echo "Circular dependecy detected for lib $lib chain [${chain[@]}]"
+                echo "${FUNCNAME[@]}"
                 exit 1
             fi
         done
@@ -50,7 +36,8 @@ function require() {
 
     for import in ${imports[@]}
     do
-        _load.source_lib $lib || exit 1
+        _load.is_loaded $import && continue
+        _load.source_lib $import
     done
 
     unset chain[${#chain[@]}-1]
@@ -134,11 +121,19 @@ function _load.import_error() {
 }
 
 function _load.load_once() {
+    @deprecated
+
     local lib=$1
 
-    [[ "${_LIB_LOADED[$lib]}" = "true" ]] && return 0
+    _load.is_loaded $lib && return 0
     _LIB_LOADED[$lib]=true
     
+    return 1
+}
+
+function _load.is_loaded() {
+    local lib=$1
+    [[ "${_LIB_LOADED[$lib]}" = "true" ]] && return 0
     return 1
 }
 

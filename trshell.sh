@@ -1,6 +1,5 @@
 #!/bin/bash
 
-#This perevents sourcing the script twice
 #If the enviroment is already loaded, we do not load twice
 if [[ ! -z "$_TRSH_LOADED" ]]; then
     return 0
@@ -46,9 +45,25 @@ function _trsh.cleanup() {
 [[ -f "$TRSHRC" ]] && source $TRSHRC
 source $TRSH_DIR/internal/load.sh
 
+#This perevents sourcing the script twice
 require trsh "
+    colors
     log
-    tagging
+    env
+    test
+    trshell
+    stash
+    update-trshell
+    install
+    doc
+    utils
+    awkdb
+    trap
+    cli
+    template
+    hg
+    git
+    vcs
 " || exit 1
 
 load.base_init $TRSH_DIR
