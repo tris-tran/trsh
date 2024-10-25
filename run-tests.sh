@@ -10,7 +10,7 @@ TRSH_TEST_DIR="$TRSH_DIR/build/test"
 
 @test
 function test.dbawk.testread() {
-pwd
+    
     echo "test.dbawk.testread"
     test.assert_string 
 }

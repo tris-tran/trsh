@@ -3,13 +3,12 @@
 # in the same script
 declare -g -A _LIB_LOADED
 
-declare -r _LOAD_INTERNALS=(
-    
-)
+#deprecated
+declare -r _LOAD_INTERNALS=()
 
 #List of possible libraries
-declare -r _LOAD_LIBS=(
-)
+#deprecated
+declare -r _LOAD_LIBS=()
 
 function require() {
     local lib=$1
@@ -28,11 +27,8 @@ function require() {
                 exit 1
             fi
         done
-
         chain=( $chain $lib )
-
     fi
-
 
     for import in ${imports[@]}
     do
