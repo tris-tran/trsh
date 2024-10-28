@@ -3,102 +3,111 @@ _load.load_once db && return 0
 DB_ERRNO_DUP=2
 DB_ERRNO_NO_KEY=3
 
-function db.mapper() {
-    local nFields=$1
-    shift
+function awkdb.delete_db() {
+    local folder=$1
+    local dbName=$2
+    local db="$folder/$dbName"
+    pushd $folder > /dev/null
+    rm "$db"
+    _r="$db"
+    popd > /dev/null
 
-    local keys=()
-    for (( i=1; i<=$nFields; i+=1 ))
-    do
-        eval `istSet="\\${${!i}+x}"`
-        # Substite this for -v vlidation of variable
-        # probably on an eval statment
-        if [[ -z "$isSet" ]]; then
-            echo "variable ${!i} not set"
-        fi
-        keys=( ${keys[@]} ${!i} )
-    done
-    shift $nFields 
-    for (( i=1; i<=$nFields; i+=1 ))
-    do
-        key=${keys[$(( $i - 1 ))]}
-        printf -v "$key" '%s' "${!i}"
-    done
 }
 
-function db.validate() {
+function awkdb.list() {
     local db=$1
-
-    local duplicateKey=$(awk '
-        BEGIN { FS="|"; OFS=" " }
-        keys[$1]++ { $1=$1; print "duplicate", NR, $0; exit 2; }
-        END { exit 0 }
+    _r=$(awk -v key=$key -v field=$field '
+        BEGIN { FS="|"; OFS="|" }
+        { print $1 } 
         ' $db)
-
-    if [[ "$?" != 0 ]]; then
-        _r=$duplicateKey
-        return 1
-    fi
 }
 
-function db.get_key() {
+function awkdb.create_db() {
+    local folder=$1
+    local dbName=$2
+    local db="$folder/$dbName"
+    mkdir -p $folder
+    pushd $folder > /dev/null
+    touch "$db"
+    _r="$db"
+    popd > /dev/null
+}
+
+function awkdb.delete() {
     local db=$1
     local key=$2
-    _r=$(awk -v key=$key '
-        BEGIN { FS="|"; OFS=" " }
-        $1 == key { $1=""; print $0; exit 0; }
+
+    _awkdb.update
+    local trans=$_r
+
+    awk -v key=$key '
+        BEGIN { FS="|"; OFS="|" }
+        $1 == key { next }
+        { print }
+        ' $db > $trans
+
+    _awkdb.commit $db $trans
+}
+
+function awkdb.get() {
+    local db=$1
+    local key=$2
+    local field=$(($3 + 1))
+
+    _r=$(awk -v key=$key -v field=$field '
+        BEGIN { FS="|"; OFS="|" }
+        $1 == key { $1=""; print $field; exit 0; }
         END { exit 3 }
         ' $db)
     return $?
 }
 
-function db.set_value() {
+function awkdb.get_raw() {
     local db=$1
     local key=$2
-    local field=$3
+
+    _r=$(awk -v key=$key '
+        BEGIN { FS="|"; OFS="|" }
+        $1 == key { $1=""; print substr($0, 2); exit 0; }
+        END { exit 3 }
+        ' $db)
+    return $?
+}
+
+function awkdb.get_from_raw() {
+    local field=$1
+    local raw=$2
+    _r=$(echo "$raw" | awk -v field=$field '
+        BEGIN { FS="|"; OFS="|" }
+        { print $field }
+        ')
+    return $?
+}
+
+function awkdb.put() {
+    local db=$1
+    local key=$2
+    local field=$(($3 + 1))
     local value=$4
 
-    _db.update
+    _awkdb.update
     local trans=$_r
 
     awk -v key=$key -v field=$field -v value=$value '
         BEGIN { FS="|"; OFS="|" }
-        $1 ~ key { $field=value; print $0; next }
+        $1 ~ key { found = 1; $field=value; print $0; next }
         { print }
+        END { if ( ! found) { $0=""; $field=value; $1=key; print $0 } }
         ' $db > $trans
 
-    _db.commit $db $trans
+    _awkdb.commit $db $trans
 }
 
-function db.put_value() {
-    local db=$1
-    shift
-    local key=$1
-    shift
-
-    local row="$key"
-    for field in "$@"
-    do
-        row="$row|$field"
-    done
-
-    _db.update
-    local trans=$_r
-     awk -v key=$key -v row="$row" '
-        BEGIN { FS="|" }
-        $1 == key { printed=1; print row; next }
-        { print }
-        END { if (!printed) { print row } }
-    ' $db 
-
-    _db.commit $db $trans
-}
-
-function _db.update() {
+function _awkdb.update() {
     _r=$(mktemp)
 }
 
-function _db.commit() {
+function _awkdb.commit() {
     local db=$1
     local tempDb=$2
     mv $2 $1

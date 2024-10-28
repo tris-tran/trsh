@@ -56,7 +56,32 @@ function test.run_test() {(
 
 )}
 
+function test.assert_return() {
+    if [[ ! $? -eq 0 ]]; then
+        exit 1
+    fi
+}
+
 function test.assert_string() {
+    local message="$1"
+    local s1="$2"
+    local s2="$3"
+
+    if [[ "$s1" != "$s2" ]]; then
+        _test.assert_fail "$message" "$s1" "$s2"
+        exit 1
+    fi
+}
+
+function _test.assert_fail() {
+    local message="$1"
+    local expected="$2"
+    local actual="$3"
     
+    log.error "Message: $message"
+    log.error "Expected: "
+    echo "$expected"
+    log.error "Actual: "
+    echo "$actual"
 }
 
