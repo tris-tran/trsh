@@ -14,7 +14,6 @@ LOG_GREEN=$(tput setaf 2)
 LOG_ORANGE=$(tput setaf 3)
 LOG_COLOR_RESET=$(tput sgr0)
 
-
 # Logs an empty line
 function log.line() {
     echo ""

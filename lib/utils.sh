@@ -1,4 +1,7 @@
-_load.load_once utils && return 0
+
+require utils "
+" || return 0
+
 
 
 function utils.split_by() {
@@ -33,4 +36,8 @@ function utils.random() {
 function utils.random_num() {
     local nchars=$1
     _r=$(tr -dc 0-9 < /dev/urandom | head -c $nchars )
+}
+
+function utils.ensure_bash() {
+   : 
 }

@@ -10,6 +10,7 @@ declare -r _LOAD_INTERNALS=()
 #deprecated
 declare -r _LOAD_LIBS=()
 
+declare -g -a chain
 function require() {
     local lib=$1
     local imports=$2
@@ -27,7 +28,7 @@ function require() {
                 exit 1
             fi
         done
-        chain=( $chain $lib )
+        chain=( ${chain[@]} $lib )
     fi
 
     for import in ${imports[@]}
@@ -36,7 +37,7 @@ function require() {
         _load.source_lib $import
     done
 
-    unset chain[${#chain[@]}-1]
+    unset chain[$(( ${#chain[@]} - 1 ))]
 }
 
 
@@ -105,7 +106,6 @@ function _load.source_lib() {
     #source
     . $libFile
     _load.import_error $libPath $lib
-
     _load.load_once $lib
 }
 
@@ -117,8 +117,6 @@ function _load.import_error() {
 }
 
 function _load.load_once() {
-    @deprecated
-
     local lib=$1
 
     _load.is_loaded $lib && return 0

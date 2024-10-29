@@ -4,7 +4,6 @@
 if [[ ! -z "$_TRSH_LOADED" ]]; then
     return 0
 fi
-
 _TRSH_LOADED=true
 
 TRSH_DIR="$HOME/.trshell"
@@ -47,6 +46,7 @@ source $TRSH_DIR/internal/load.sh
 
 #This perevents sourcing the script twice
 require trsh "
+    tagging
     colors
     log
     env
@@ -76,19 +76,12 @@ install.configure_development
 
 # If its not a packaged version of the script
 # we can check if its being sourced right here
-if [[ -z "$_TRSH_LOADED" ]]; then
-    log.trace "Command to run is: [$@]"
-    (return 0 2>/dev/null)
-    if [ $? -eq 0 ]; then
-        echo "Loading without script"
-        log.trace "Loading without script"
-        return 0
-    fi
-# In case of being sourced we have the variable already set
-else
-    if [[ ! -z "$_TRSH_SOURCED" ]]; then
-        return 0
-    fi
+log.trace "Command to run is: [$@]"
+(return 0 2>/dev/null)
+if [ $? -eq 0 ]; then
+    _TRSH_SOURCED=true
+    log.trace "Loading without script"
+    return 0
 fi
 
 TRSH_OPTIONS=(

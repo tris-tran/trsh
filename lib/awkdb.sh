@@ -112,3 +112,12 @@ function _awkdb.commit() {
     local tempDb=$2
     mv $2 $1
 }
+
+
+function awkdb.kv() {
+    function kv.get() {
+        local db=$1
+        local key=$2
+        awkdb.get_raw $db $key
+    }
+}

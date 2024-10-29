@@ -1,6 +1,13 @@
 
 # trsh
 
+A bash framework.
+
+Why not modernish...
+Why not bash-it...
+
+My philosphy...
+
 ## TODO
 
 - [ ] Change pushd and popd to detect if needed.
