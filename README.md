@@ -1,7 +1,7 @@
 
 # trsh
 
-A bash framework.
+A bash framework, platform, tools.
 
 Why not modernish...
 Why not bash-it...

@@ -1,4 +1,5 @@
-_load.load_once db && return 0
+require awkdb "
+" || return 0
 
 DB_ERRNO_DUP=2
 DB_ERRNO_NO_KEY=3
@@ -113,11 +114,3 @@ function _awkdb.commit() {
     mv $2 $1
 }
 
-
-function awkdb.kv() {
-    function kv.get() {
-        local db=$1
-        local key=$2
-        awkdb.get_raw $db $key
-    }
-}

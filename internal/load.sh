@@ -1,4 +1,6 @@
 
+TRSH_LIB_PATH="$TRSH_DIR/internal:$TRSH_DIR/lib"
+
 # Array with loaded libs to prevent multiple loads of one library
 # in the same script
 declare -g -A _LIB_LOADED
@@ -91,27 +93,22 @@ function _load.libs() {
 function _load.source_lib() {
     local lib=$1
 
-    local libPath="$TRSH_DIR"
-    local libFile="$libPath/lib/${lib}.sh"
-
-    if [ ! -f "$libFile" ]; then 
-        libFile="$libPath/internal/${lib}.sh"
-        if [ ! -f "$libFile" ]; then
-            echo "${FUNCNAME[@]}"
-            echo "No file lib found for ${lib}.sh in $libPath"
-            exit 1
-        fi
+    local libFile=$(_load.search_lib $lib)
+    if [[ -z "$libFile" ]]; then
+        echo "${FUNCNAME[@]}"
+        echo "No file lib found for ${lib}.sh in $libPath"
+        exit 1
     fi
 
     #source
     . $libFile
-    _load.import_error $libPath $lib
+    _load.import_error $libFile
     _load.load_once $lib
 }
 
 function _load.import_error() {
     if [ $? -ne 0 ]; then
-        echo "Error loading library $2 from $1"
+        echo "Error loading library $1"
         exit 1
     fi
 }
@@ -140,3 +137,21 @@ function @deprecated() {
 :
 }
 
+function _load.search_lib() {
+    local lib=$1
+    local IFS=":"
+    local possibleNames=$(echo $lib{.sh,.trsh})
+    for libPath in $TRSH_LIB_PATH
+    do
+        IFS=" "
+        for libName in $possibleNames
+        do
+            libFile="$libPath/$libName"
+            if [[ -f "$libFile" ]]; then
+                echo $libFile
+                return 0
+            fi
+        done
+    done
+    return 1
+}
