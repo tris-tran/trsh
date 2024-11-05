@@ -1,25 +1,43 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+. trsh
 
 THEME=$HOME/Projects/trsh/themes/tochoa.sh
 . $THEME
 
-declare -A SSHE_HOSTS
-SSHE_HOSTS[tochoa]="tochoa@localhost"
+#Indicates that we are in our first hots
+SSHE_FIRST=true
 
+#All hosts declared at first host
+#we should load this from cfg
+declare -A SSHE_HOSTS
+SSHE_HOSTS["tochoa"]="tochoa@localhost"
 
 #Empty function we send to remote
 function sshe.hosts() {
-:
+    local hostName="$1"
+    local resolvedHost="${SSHE_HOSTS[$hostName]}"
+
+    if [[ ! -z "$resolvedHost" ]]; then
+        _r="$resolvedHost"
+    else
+        _r="$hostName"
+    fi
+
+    if [[ "$SSHE_FIRST" == "true" ]]; then
+        : #sshe.save_host "$@"
+    fi
 }
 
 SSHE_DEPTH=0
 function sshe() {
+    sshe.definitions
     # We make the global variable local to send over ssh and keep our copy
     local SSHE_DEPTH=$SSHE_DEPTH
     local host=$1
     if [[ ! "$1" =~ "@" ]]; then
-        sshe.hosts
-        host="${SSHE_HOSTS[$1]}"
+        sshe.hosts "$@"
+        host="$_r"
     fi
 
     SSHE_DEPTH=$(($SSHE_DEPTH + 1))
@@ -28,6 +46,10 @@ function sshe() {
 }
 
 function sshe.import() {
+:
+}
+
+function sshe.definitions() {
 :
 }
 
@@ -42,21 +64,18 @@ function _sshe.alias_func() {(
     echo "}"
 )}
 
+# Creates the function declaration of all original host possible hosts by name
+function _sshe.load_hosts() {
+    echo "declare -g -A SSHE_HOSTS"
+    for hostName in "${!SSHE_HOSTS[@]}"
+    do
+        echo "SSHE_HOSTS[\"$hostName\"]=\"${SSHE_HOSTS[$hostName]}\""
+    done
+}
+
 function _sshe.load_func() {
     declare -f $1
     echo "export -f $1"
-}
-
-# Creates the function declaration of all original host possible hosts by name
-function _sshe.hosts_func() {
-    echo "function sshe.hosts() {"
-    echo "declare -g -A SSHE_HOSTS"
-    for key in ${!SSHE_HOSTS[@]}
-    do
-        echo "SSHE_HOSTS[$key]=\"${SSHE_HOSTS[$key]}\""
-    done
-    echo "export SSHE_HOSTS"
-    echo "}"
 }
 
 SSHE=$(cat << END
@@ -64,15 +83,18 @@ function _sshe() {
     SSHE_DEPTH=\$1
     export SSHE_DEPTH
 
-    $(_sshe.hosts_func)
-    export -f sshe.hosts
 
     $(_sshe.alias_func)
     export -f sshe.alias
 
+    function sshe.definitions() {
+        $(_sshe.load_hosts)
+    }
+
     $(_sshe.load_func theme.define)
     $(_sshe.load_func theme.eval)
     $(_sshe.load_func sshe.import)
+    $(_sshe.load_func sshe.hosts)
     $(_sshe.load_func sshe)
 
     function sshe.load_theme() {
@@ -89,6 +111,8 @@ function _sshe() {
     }
     export -f sshe.set_sshe
 
+    sshe.definitions
+    export -f sshe.definitions
     sshe.alias
     sshe.load_theme
     exec bash  --norc --noprofile -i 

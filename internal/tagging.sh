@@ -1,6 +1,12 @@
 require tagging "
 " || return 0
 
+declare -g NO_WARN=false
+
+function @suppress_warning() {
+    NO_WARN="true"
+}
+
 # You can deprecated a functionality to show log
 # The idea is to call this function in the first 
 # line of a deprecated function. So every time is
@@ -12,8 +18,10 @@ function @deprecated() {
 
 # Prints a warning with all the stack trace of the call
 function @warning() {
-    echo "Warning $@" >&2
-    @print_trace >&2
+    if [[ "$NO_WARN" != "true" ]]; then
+        echo "Warning $@" >&2
+        @print_trace >&2
+    fi
 }
 
 # Prints a dugging log (instead of echo)

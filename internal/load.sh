@@ -69,19 +69,6 @@ function load.import() {
     return $r
 }
 
-function load.base_init() {
-    @deprecated
-
-    _load.libs "${_LOAD_INTERNALS[@]}"
-}
-
-function load.full_init() {
-    @deprecated
-
-    load.base_init 
-    _load.libs "${_LOAD_LIBS[@]}"
-}
-
 function _load.libs() {
     local libs=($@) 
     for lib in ${libs[@]}

@@ -60,20 +60,19 @@ require trsh "
     awkdb
     trap
     cli
+    getopt
     template
     hg
     git
     vcs
 " || exit 1
 
-load.base_init $TRSH_DIR
-load.full_init $TRSH_DIR
-
 trshell.init
 #trshell.update
 
 install.configure_development
 
+echo "$@"
 # If its not a packaged version of the script
 # we can check if its being sourced right here
 log.trace "Command to run is: [$@]"
@@ -83,6 +82,8 @@ if [ $? -eq 0 ]; then
     log.trace "Loading without script"
     return 0
 fi
+
+#TODO: remove all this.
 
 TRSH_OPTIONS=(
     run

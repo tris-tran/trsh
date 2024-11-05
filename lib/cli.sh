@@ -20,7 +20,8 @@ function cli.help() {
     for opt in "${TRSH_CURRENT_OPTIONS[@]}"
     do
         if [[ "$opt" != "help" ]]; then
-            eval "local doc=\"\$_${TRSH_CURRENT_NAME}_${opt/-/_}_DOC\""
+            eval "local doc=\"\$_${TRSH_CURRENT_NAME}_${opt/-/_}_doc\""
+            echo "${TRSH_CURRENT_NAME}"
             echo $opt
             echo "$doc"
         fi
@@ -41,7 +42,7 @@ function cli.run() {
 
     if [[ "${TRSH_CURRENT_OPTIONS[*]}" =~ "$option" ]]; then
         if [[ "$(type -t $function)" = "function" ]]; then
-            $function $@
+            $function "$@"
             return 0
         fi
     fi
