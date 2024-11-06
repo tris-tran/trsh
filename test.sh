@@ -1,4 +1,6 @@
-#!/usr/bin/env trsh
+#!/usr/bin/bash
+#
+. trsh
 
 require testa "
     getopt
@@ -15,8 +17,74 @@ function pepe() {
 shopt -s expand_aliases
 alias lo="echo $@"
 
-alias toStderr=">&2"
 alias endusing=""
+
+function log() {
+    tee >( while read line; do echo "[$1] $line"; done )
+}
+
+function die() {
+    if [[ "$?" != 0 ]]; then
+        echo "ERROR" >2&
+    fi
+}
+
+function isset() {
+    if [[ -z "$1" ]]; then
+        return 1
+    else
+        return 0
+    fi
+}
+
+function _set() {
+    if isset "$1"; then 
+        echo "$1"
+    else
+        echo ""
+    fi
+}
+
+function _clean_r() {
+    __r "" "" ""
+}
+function __r() {
+    local array=("$@")
+
+    _r="$(_set ${array[0]})"
+    _r1="$(_set ${array[1]})"
+    _r2="$(_set ${array[2]})"
+}
+
+alias ***='set -- $_r $_r1 $_r2'
+
+function set_r() {
+    _r="$@"
+}
+
+
+function bad() {
+   __r "badpepe" "error1"
+}
+
+set -- "uno" "dos" "tres"
+echo "$@"
+_r2="other r"
+
+bad ;***
+echo "$1 $2 $3"
+
+array=("uno" "dos")
+set -- "$array"
+echo "$@"
+
+echo "$_r2"
+
+if [[ -z "$_r" ]]; then
+    echo "works"
+fi
+
+exit 1
 
 NAME="test"
 
