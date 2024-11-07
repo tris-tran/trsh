@@ -1,6 +1,33 @@
 
 require doc "
+    utils
 " || return 0
+
+function doc.document_trsh() {
+
+    rm -rf $TRSH_DIST/doc
+    mkdir $TRSH_DIST/doc
+
+    local libs="$TRSH_CORE_LIBS
+                $TRSH_PROVIDED_LIBS"
+
+    @log $libs
+
+    local allFunctions=""
+    for lib in ${libs[@]}
+    do
+        doc.document_lib "$lib"
+        allFunctions+=$'\n'"$_r"
+    done
+    echo "$allFunctions" | LC_COLLATE=C sort -r > $TRSH_DIST/doc/all-functions.md
+}
+
+function doc.document_lib() {
+    local lib=$1
+    local libFile=$(_load.search_lib "$lib" || utils.die "No lib $lib found")
+    doc.describe "$libFile"  > $TRSH_DIST/doc/${lib}.md
+    _r="$_r"
+}
 
 function doc.library() {
     @deprecated

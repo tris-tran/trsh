@@ -1,6 +1,8 @@
 # Functions
+- [_load.load_once](_load.load_once)
 - [_stash.init_user](_stash.init_user)
 - [_stash.list_type](_stash.list_type)
+- [require](require)
 - [stash.function](stash.function)
 - [stash.install_script](stash.install_script)
 - [stash.list](stash.list)

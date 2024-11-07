@@ -1,4 +1,5 @@
 # Functions
+- [_load.load_once](_load.load_once)
 - [git.add_file](git.add_file)
 - [git.branch](git.branch)
 - [git.clone_in_folder](git.clone_in_folder)
@@ -10,6 +11,7 @@
 - [git.outgoing](git.outgoing)
 - [git.push](git.push)
 - [git.update_project](git.update_project)
+- [require](require)
 # git.outgoing
 
 # git.branch

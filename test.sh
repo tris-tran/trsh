@@ -6,6 +6,9 @@ require testa "
     getopt
 " || return 0
 
+if (exit 1) 2> /dev/null >&2; then
+
+
 SSHE_HOSTS[jonkins]="eedevadmin@192.168.5.200"
 #echo "${SSHE_HOSTS[@]}"
 #echo "${!SSHE_HOSTS[@]}"
@@ -86,6 +89,8 @@ fi
 
 exit 1
 
+else
+
 NAME="test"
 
 TEST_OPTIONS=(
@@ -120,4 +125,4 @@ cli.define_options "${TEST_OPTIONS[*]}"
 cli.define_name "$NAME"
 cli.run "$@"
 
-
+fi

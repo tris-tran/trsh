@@ -20,7 +20,7 @@ TRSH_STASH_REMOTE="git@github.com:tris-tran/test-stash.git"
 TRSH_STASH_BRANCH="master"
 TRSH_STASH_GIT_REMOTE="origin"
 
-LOG_LOGLEVEL="ERROR"
+LOG_CURRENT_LEVEL=0
 
 # Move to .trshrc
 TRSH_STASH_REMOTE="$HOME/Projects/MIERDA/stash-gestiona"
@@ -44,35 +44,40 @@ function _trsh.cleanup() {
 [[ -f "$TRSHRC" ]] && source $TRSHRC
 source $TRSH_DIR/internal/load.sh
 
-#This perevents sourcing the script twice
-require trsh "
+TRSH_CORE_LIBS="
     tagging
     colors
     log
     env
+    utils
+    awkdb
+    trap
+"
+
+TRSH_PROVIDED_LIBS="
     test
     trshell
     stash
     update-trshell
     install
     doc
-    utils
-    awkdb
-    trap
     cli
     getopt
     template
     hg
     git
     vcs
-" || exit 1
+"
+
+#This perevents sourcing the script twice
+require trsh "$TRSH_CORE_LIBS
+$TRSH_PROVIDED_LIBS" || exit 1
 
 trshell.init
 #trshell.update
 
 install.configure_development
 
-echo "$@"
 # If its not a packaged version of the script
 # we can check if its being sourced right here
 log.trace "Command to run is: [$@]"

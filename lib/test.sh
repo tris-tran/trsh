@@ -37,9 +37,9 @@ function test.run_all() {
         log.info "Running test $test"
         test.run_test "$test"
         if [[ "$?" != 0 ]]; then
-            log.red "Failed $test"
+            log.error "Failed $test"
         else
-            log.green "Ok $test"
+            log.info "Ok $test"
         fi
     done
 }

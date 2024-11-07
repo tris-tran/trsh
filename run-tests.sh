@@ -9,6 +9,21 @@
 TRSH_TEST_DIR="$TRSH_DIR/build/test"
 
 @test
+function test.log.test() {
+    LOG_CURRENT_LEVEL=-1
+    log.error "ERROR"
+    log.warn "WARN"
+    log.info "INFO"
+    log.debug "DEGUG"
+    log.trace "TRACE"
+}
+
+@test
+function test.doc.document_all() {
+    doc.document_trsh
+}
+
+@test
 function test.dbawk.testput() {
     local db
 

@@ -1,6 +1,6 @@
 # Functions
 - [_load.load_once](_load.load_once)
-- [colors.define](colors.define)
+- [getopts.getopts](getopts.getopts)
 - [require](require)
-# colors.define
+# getopts.getopts
 

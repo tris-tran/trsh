@@ -1,4 +1,5 @@
 # Functions
+- [_load.load_once](_load.load_once)
 - [_log.color](_log.color)
 - [_log.print_log](_log.print_log)
 - [log.debug](log.debug)
@@ -8,8 +9,12 @@
 - [log.line](log.line)
 - [log.orange](log.orange)
 - [log.red](log.red)
+- [log.set_level](log.set_level)
 - [log.trace](log.trace)
 - [log.warn](log.warn)
+- [require](require)
+# log.set_level
+
 # log.line
  Logs an empty line
 

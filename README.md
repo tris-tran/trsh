@@ -8,23 +8,42 @@ Why not bash-it...
 
 My philosphy...
 
-## TODO
-
-- [ ] Change pushd and popd to detect if needed.
-- [ ] Add imports to library to only import the needed parts
-    - [ ] Improve the package to only import the needed parts of library
-        a imports should be declared in a special function.
-- [ ] Complete validations in library db
-
 ## Creating basic script with the framework
 
 ```bash
-_TEST_{OPTION}_DOC=$(cat <<-END
-    {DOCUMENTATION FOR FUNCTIONALITY}
+#!/usr/bin/env trsh
+
+NAME="test"
+
+TEST_OPTIONS=(
+    run
+    sample-op
+)
+
+_test_sample_op_doc=$(cat <<-END
+    Sample of functionality
 END
-) 
-function test.{OPTION}() {
-    ...
+)
+function test.sample_op() {
+    local definitions=("user u" "branch b" "start_time s" "? isset" )
+    local -A args
+    getopts.getopts "$@"
+    echo "Arguments $@"
+
+    echo "options ${!args[@]}"
+    echo "option user value:[${args[user]}]"
+    echo "option branch value:[${args[branch]}]"
+    echo "option start_time value:[${args[start_time]}]"
+    echo "option isset value:[${args[isset]}]"
+
 }
+
+function test.run() {
+:
+}
+
+cli.define_options "${TEST_OPTIONS[*]}"
+cli.define_name "$NAME"
+cli.run "$@"
 ```
 
