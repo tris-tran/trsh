@@ -6,7 +6,19 @@ require testa "
     getopt
 " || return 0
 
-if (exit 1) 2> /dev/null >&2; then
+if (exit 0) 2> /dev/null >&2; then
+
+function sload() {
+    set +a
+    . ./stest.sh
+    echo $name
+    set -a
+}
+
+sload
+
+echo $name
+exit 1
 
 
 SSHE_HOSTS[jonkins]="eedevadmin@192.168.5.200"
@@ -17,10 +29,65 @@ function pepe() {
     @log "inside pepe"
 }
 
-shopt -s expand_aliases
-alias lo="echo $@"
+declare -A a
+a[local]="localpar"
+a[remote]="remote"
 
+declare -p a
+
+function print_array() {
+    local -n arr_ref=$1
+
+    for key in ${!arr_ref[@]}
+    do
+        echo "[$key]=${arr_ref[$key]}"
+    done
+}
+
+print_array a
+exit 1
+
+sand="ASPOSE|cb70b650e76999556e9565a68214d0b7ee6b95f9|git|git@git-central.g3stiona.com:aspose.git|Y"
+
+IFS='|'
+asdf=($sand)
+
+function p.toLow() {
+    echo ${1,,}
+}
+
+a="p"
+$a.toLow ${asdf[0]}
+
+echo ${asdf[0]}
+
+
+
+function aar() {
+    local -n p=$1
+
+    echo ${p[name]}
+    echo ${p[repoType]}
+}
+aar signerServerStub
+
+exit 1
+
+shopt -s expand_aliases
 alias endusing=""
+
+
+exit 1
+
+set -a
+function localvar() {
+    local pepe="localpepe"
+}
+localvar
+set +a
+
+echo $pepe
+
 
 function log() {
     tee >( while read line; do echo "[$1] $line"; done )
